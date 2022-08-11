@@ -12,10 +12,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/AppError');
+const adminRouter = require('./routes/adminRoutes');
 
 const server = express();
-const port = process.env.PORT || 3000;
-
 // SET SECURITY HTTP HEADER
 server.use(helmet());
 
@@ -49,6 +48,9 @@ if (process.env.NODE_ENV === 'development') server.use(morgan('dev'));
 
 server.use(express.json());
 
+// ROUTE
+server.use('/api/v1/admin', adminRouter);
+
 // Handle when no match any routes
 server.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server !`, 404));
@@ -70,6 +72,8 @@ mongoose
   .then(() => {
     console.log('Connect to database successful !');
   });
+
+const port = process.env.PORT || 3000;
 
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
