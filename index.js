@@ -10,9 +10,11 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/AppError');
 const adminRouter = require('./routes/adminRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const server = express();
 // SET SECURITY HTTP HEADER
@@ -46,10 +48,12 @@ server.use(cors());
 // Morgan
 if (process.env.NODE_ENV === 'development') server.use(morgan('dev'));
 
+server.use(cookieParser());
 server.use(express.json());
 
 // ROUTE
 server.use('/api/v1/admin', adminRouter);
+server.use('/api/v1/users', userRouter);
 
 // Handle when no match any routes
 server.all('*', (req, res, next) => {

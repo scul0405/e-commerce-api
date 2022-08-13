@@ -32,6 +32,8 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError')
       err = new AppError(`Invalid ${err.path}: ${err.value}`, 400);
     if (err.code === 11000) err = new AppError(`Duplicate field value`, 400);
+    if (err.name === 'JsonWebTokenError')
+      err = new AppError('Invalid token', 400);
     sendErrorProd(err, res);
   } else if (process.env.NODE_ENV === 'development') sendErrorDev(err, res);
 
