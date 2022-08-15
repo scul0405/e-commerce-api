@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const { Schema } = mongoose;
 
@@ -34,7 +35,7 @@ const userSchema = new Schema({
   },
   createAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
   },
   phoneNumber: {
     type: String,
@@ -45,6 +46,8 @@ const userSchema = new Schema({
     validate: [validator.isEmail, 'Invalid email'],
     required: [true, 'Please provide your email'],
   },
+  passwordResetToken: String,
+  passwordResetTokenExpires: Date,
 });
 
 // Find only active user
@@ -53,7 +56,7 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-// Hashing password before save
+// Hashing password before save : only for create and update, not for save
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) next();
   const hashing = await bcrypt.hash(this.password, 12);
@@ -62,11 +65,32 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// For save user
+userSchema.pre('save', async function (next) {
+  if (this.isNew || !this.isModified('password')) next();
+  this.passwordChangeAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.methods.isCorrectPassword = async function (
   inputPassword,
   userPassword
 ) {
   return await bcrypt.compare(inputPassword, userPassword);
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  // create random token
+  const resetToken = crypto.randomBytes(45).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetTokenExpires =
+    Date.now() + process.env.PASSWORD_RESET_TOKEN_EXPIRES * 60 * 1000; // unit: minute
+  // Now this.passwordResetToken was update, and resetToken is the original
+  // So we must return resetToken
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -6,7 +6,6 @@ const AppError = require('../utils/AppError');
 exports.protectRoute = (Model) =>
   catchAsync(async (req, res, next) => {
     // Check user is logged in
-    console.log('aaaaa');
     if (
       !req.headers.authorization ||
       !req.headers.authorization.startsWith('Bearer')
