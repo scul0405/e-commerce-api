@@ -7,6 +7,7 @@ const {
   deleteUser,
   forgotPassword,
   resetPassword,
+  changePassword,
 } = require('../controllers/userController');
 const { protectRoute } = require('../controllers/authController');
 
@@ -18,5 +19,6 @@ userRouter.route('/updateMe').patch(protectRoute(User), updateUser);
 userRouter.route('/deleteMe').delete(protectRoute(User), deleteUser);
 userRouter.route('/forgotPassword').post(forgotPassword);
 userRouter.route('/resetPassword/:resetToken').post(resetPassword);
+userRouter.route('/changePassword').patch(protectRoute(User), changePassword);
 
 module.exports = userRouter;

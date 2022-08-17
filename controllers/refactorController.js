@@ -13,11 +13,13 @@ exports.loginOne = (Model) =>
     // check name and password is provided
     const { username, password } = req.body;
     if (!username || !password)
-      next(new AppError('Please provide your username and password', 404));
+      return next(
+        new AppError('Please provide your username and password', 404)
+      );
     // check username is exist or wrong password
     const user = await Model.findOne({ username }).select('+password');
     if (!user || !(await user.isCorrectPassword(password, user.password)))
-      next(
+      return next(
         new AppError(
           'Username or password is incorrect, please check again!',
           404

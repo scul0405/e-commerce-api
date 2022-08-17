@@ -31,7 +31,6 @@ const userSchema = new Schema({
   active: {
     type: Boolean,
     default: true,
-    select: false,
   },
   createAt: {
     type: Date,
@@ -65,7 +64,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// For save user
 userSchema.pre('save', async function (next) {
   if (this.isNew || !this.isModified('password')) next();
   this.passwordChangeAt = Date.now() - 1000;

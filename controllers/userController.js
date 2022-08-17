@@ -12,7 +12,7 @@ exports.loginUser = loginOne(User);
 
 exports.updateUser = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.confirmPassword)
-    next(new AppError('This route is not for change password', 500));
+    return next(new AppError('This route is not for change password', 500));
   const user = await User.findByIdAndUpdate(req.user._id, req.body);
   user.password = undefined;
   res.status(200).json({
@@ -33,7 +33,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const { username } = req.body;
   const user = await User.findOne({ username });
   if (!user)
-    next(
+    return next(
       new AppError('username does not exist, please check and try again', 404)
     );
   const resetToken = user.createPasswordResetToken();
@@ -66,7 +66,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetToken,
     passwordResetTokenExpires: { $gt: Date.now() },
   });
-  if (!user) next(new AppError('Token is invalid or has expired', 400));
+  if (!user) return next(new AppError('Token is invalid or has expired', 400));
   // if exist -> set new password
   user.password = req.body.password;
   user.confirmPassword = req.body.confirmPassword;
@@ -75,4 +75,21 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   // Log the user in, send JWT
   createSendToken(user, 200, res);
+});
+
+exports.changePassword = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+  const user = await User.findById(_id).select('+password');
+  if (!(await user.isCorrectPassword(req.body.password, user.password)))
+    return next(new AppError('Your password is not correct !', 400));
+  if (!req.body.newPassword || !req.body.confirmNewPassword)
+    return next(
+      new AppError('Please provide new password and confirm new password', 400)
+    );
+  user.password = req.body.newPassword;
+  user.confirmPassword = req.body.confirmNewPassword;
+  await user.save();
+  res.status(200).json({
+    status: 'success',
+  });
 });
