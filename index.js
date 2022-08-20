@@ -15,6 +15,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/AppError');
 const adminRouter = require('./routes/adminRoutes');
 const userRouter = require('./routes/userRoutes');
+const productRouter = require('./routes/productRoutes');
 
 const server = express();
 // SET SECURITY HTTP HEADER
@@ -50,10 +51,13 @@ if (process.env.NODE_ENV === 'development') server.use(morgan('dev'));
 
 server.use(cookieParser());
 server.use(express.json());
+mongoose.set('toJSON', { virtuals: true });
+mongoose.set('toObject', { virtuals: true });
 
 // ROUTE
 server.use('/api/v1/admin', adminRouter);
 server.use('/api/v1/users', userRouter);
+server.use('/api/v1/products', productRouter);
 
 // Handle when no match any routes
 server.all('*', (req, res, next) => {

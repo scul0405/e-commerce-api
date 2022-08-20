@@ -12,12 +12,10 @@ module.exports = (user, statusCode, res) => {
 
   if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true;
 
-  // Set cookies
   res.cookie('jwt', token, cookiesOptions);
 
   // delete password before send to response
   user.password = undefined;
-  // 200 for login success, 201 for create success
   res.status(statusCode).json({
     status: 'success',
     token,
