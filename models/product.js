@@ -36,6 +36,12 @@ productSchema.virtual('discountPrice').get(function () {
   return Math.round((this.price * (100 - this.discount)) / 100);
 });
 
+productSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'product',
+  localField: '_id',
+});
+
 productSchema.pre(/^find/, function (next) {
   this.find({ $ne: { status: false } });
   next();

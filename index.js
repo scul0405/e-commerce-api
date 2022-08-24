@@ -16,6 +16,7 @@ const AppError = require('./utils/AppError');
 const adminRouter = require('./routes/adminRoutes');
 const userRouter = require('./routes/userRoutes');
 const productRouter = require('./routes/productRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const server = express();
 // SET SECURITY HTTP HEADER
@@ -58,6 +59,7 @@ mongoose.set('toObject', { virtuals: true });
 server.use('/api/v1/admin', adminRouter);
 server.use('/api/v1/users', userRouter);
 server.use('/api/v1/products', productRouter);
+server.use('/api/v1/reviews', reviewRouter);
 
 // Handle when no match any routes
 server.all('*', (req, res, next) => {

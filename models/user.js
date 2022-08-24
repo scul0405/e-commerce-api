@@ -16,10 +16,11 @@ const userSchema = new Schema({
     type: String,
     minLength: [6, 'password must at least 6 characters'],
     required: [true, 'Please provide your password'],
+    select: false,
   },
   confirmPassword: {
     type: String,
-    selected: false,
+    select: false,
     validate: {
       validator: function (confirmPassword) {
         return confirmPassword === this.password;
@@ -31,6 +32,7 @@ const userSchema = new Schema({
   active: {
     type: Boolean,
     default: true,
+    select: false,
   },
   createAt: {
     type: Date,

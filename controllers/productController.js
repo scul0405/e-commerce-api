@@ -18,6 +18,19 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findById(req.params.id).populate({
+    path: 'reviews',
+    select: 'review rating images createAt -product',
+  });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product,
+    },
+  });
+});
+
 exports.createAProduct = catchAsync(async (req, res, next) => {
   const product = await Product.create(req.body);
   res.status(201).json({
@@ -30,7 +43,10 @@ exports.createAProduct = catchAsync(async (req, res, next) => {
 
 exports.updateProduct = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.findByIdAndUpdate(id, req.body);
+  console.log(id);
+  const product = await Product.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
   res.status(200).json({
     status: 'success',
     data: {
