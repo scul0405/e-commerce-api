@@ -2,6 +2,7 @@ const express = require('express');
 const Admin = require('../models/admin');
 const { protectRoute } = require('../controllers/authController');
 const reviewRouter = require('./reviewRoutes');
+const cartRouter = require('./cartRoutes');
 const {
   getAllProducts,
   createAProduct,
@@ -13,6 +14,7 @@ const {
 const productRouter = express.Router();
 
 productRouter.use('/:productId/reviews', reviewRouter);
+productRouter.use('/:productId/cart', cartRouter);
 
 productRouter
   .route('/')

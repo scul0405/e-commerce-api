@@ -17,6 +17,7 @@ const adminRouter = require('./routes/adminRoutes');
 const userRouter = require('./routes/userRoutes');
 const productRouter = require('./routes/productRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const cartRouter = require('./routes/cartRoutes');
 
 const server = express();
 // SET SECURITY HTTP HEADER
@@ -60,6 +61,7 @@ server.use('/api/v1/admin', adminRouter);
 server.use('/api/v1/users', userRouter);
 server.use('/api/v1/products', productRouter);
 server.use('/api/v1/reviews', reviewRouter);
+server.use('/api/v1/cart', cartRouter);
 
 // Handle when no match any routes
 server.all('*', (req, res, next) => {

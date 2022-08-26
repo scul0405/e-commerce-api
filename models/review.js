@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Product = require('./product');
 
 const { Schema } = mongoose;
 
@@ -18,14 +19,37 @@ const reviewSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
-  user: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  product: {
+  productId: {
     type: Schema.Types.ObjectId,
     ref: 'Product',
   },
+});
+
+reviewSchema.statics.calculateAverageRatingsAndQuantityRatings =
+  async function (productId) {
+    const stats = await this.aggregate([
+      {
+        $match: { productId: productId },
+      },
+      {
+        $group: {
+          _id: '$productId',
+          quantityRatings: { $sum: 1 },
+          averageRatings: { $avg: '$rating' },
+        },
+      },
+    ]);
+    await Product.findByIdAndUpdate(productId, {
+      quantityRatings: stats[0].quantityRatings,
+      averageRatings: stats[0].averageRatings,
+    });
+  };
+reviewSchema.post('save', function () {
+  this.constructor.calculateAverageRatingsAndQuantityRatings(this.productId);
 });
 
 const Review = mongoose.model('Review', reviewSchema);

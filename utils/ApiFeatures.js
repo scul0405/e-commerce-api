@@ -12,7 +12,6 @@ class ApiFeatures {
     //  add $ before special query
     const regex = /\b(gt|gte|lt|lte|in)\b/g;
     queryString = queryString.replace(regex, (match) => `$${match}`);
-    console.log(JSON.parse(queryString));
     this.query = this.query.find(JSON.parse(queryString));
     return this;
   }

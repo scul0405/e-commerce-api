@@ -9,7 +9,7 @@ const {
   deleteReview,
 } = require('../controllers/reviewController');
 
-const reviewRouter = express.Router();
+const reviewRouter = express.Router({ mergeParams: true });
 
 reviewRouter
   .route('/')

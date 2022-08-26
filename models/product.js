@@ -6,6 +6,7 @@ const productSchema = new Schema({
   name: {
     type: String,
     required: [true, 'A product must have a name'],
+    unique: true,
   },
   description: String,
   price: {
@@ -27,6 +28,14 @@ const productSchema = new Schema({
     required: [true, 'A product must have at least 1 image'],
   },
   quantitySold: {
+    type: Number,
+    default: 0,
+  },
+  quantityRatings: {
+    type: Number,
+    default: 0,
+  },
+  averageRatings: {
     type: Number,
     default: 0,
   },

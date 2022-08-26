@@ -4,8 +4,8 @@ const AppError = require('../utils/AppError');
 
 const checkValidUser = async (user, reviewId, next) => {
   const review = await Review.findById(reviewId);
-  if (!review.user.equals(user.id))
-    next(new AppError(`You don't have permission to do this`, 401));
+  if (!review.userId.equals(user.id))
+    return next(new AppError(`You don't have permission to do this`, 401));
 };
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
@@ -21,7 +21,7 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 
 exports.getAReview = catchAsync(async (req, res, next) => {
   const review = await Review.findById(req.params.id).populate({
-    path: 'user',
+    path: 'userId',
     select: 'username',
   });
   res.status(200).json({
@@ -33,15 +33,15 @@ exports.getAReview = catchAsync(async (req, res, next) => {
 });
 
 exports.createAReview = catchAsync(async (req, res, next) => {
-  if (req.params.productId) req.body.product = req.params.productId;
-  req.body.user = req.user.id;
+  if (req.params.productId) req.body.productId = req.params.productId;
+  req.body.userId = req.user.id;
   // Handle when review by user already created
   const createdReview = await Review.findOne({
-    user: req.body.user,
-    product: req.body.product,
+    userId: req.body.userId,
+    productId: req.body.productId,
   });
   if (createdReview)
-    next(new AppError(`Your review on this product already exist`, 400));
+    return next(new AppError(`Your review on this product already exist`, 400));
 
   const review = await Review.create(req.body);
   res.status(201).json({
@@ -54,7 +54,9 @@ exports.createAReview = catchAsync(async (req, res, next) => {
 
 exports.updateReview = catchAsync(async (req, res, next) => {
   await checkValidUser(req.user, req.params.id, next);
-  const updateReview = await Review.findByIdAndUpdate(req.params.id, req.body);
+  const updateReview = await Review.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
   res.status(200).json({
     status: 'success',
     data: {
