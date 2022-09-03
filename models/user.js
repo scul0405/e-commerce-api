@@ -5,51 +5,54 @@ const crypto = require('crypto');
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    minLength: [6, 'Username must at least 6 characters'],
-    unique: true,
-    required: [true, 'Please provide your username'],
-  },
-  password: {
-    type: String,
-    minLength: [6, 'password must at least 6 characters'],
-    required: [true, 'Please provide your password'],
-    select: false,
-  },
-  confirmPassword: {
-    type: String,
-    select: false,
-    validate: {
-      validator: function (confirmPassword) {
-        return confirmPassword === this.password;
-      },
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      minLength: [6, 'Username must at least 6 characters'],
+      unique: true,
+      required: [true, 'Please provide your username'],
     },
-    required: [true, 'Please provide your confirm password'],
+    password: {
+      type: String,
+      minLength: [6, 'password must at least 6 characters'],
+      required: [true, 'Please provide your password'],
+      select: false,
+    },
+    confirmPassword: {
+      type: String,
+      select: false,
+      validate: {
+        validator: function (confirmPassword) {
+          return confirmPassword === this.password;
+        },
+      },
+      required: [true, 'Please provide your confirm password'],
+    },
+    passwordChangeAt: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    phoneNumber: {
+      type: String,
+      required: [true, 'Please provide your phone number'],
+    },
+    email: {
+      type: String,
+      validate: [validator.isEmail, 'Invalid email'],
+      required: [true, 'Please provide your email'],
+    },
+    address: {
+      type: String,
+      required: [true, 'Please provide your address'],
+    },
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date,
   },
-  passwordChangeAt: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-  createAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  phoneNumber: {
-    type: String,
-    required: [true, 'Please provide your phone number'],
-  },
-  email: {
-    type: String,
-    validate: [validator.isEmail, 'Invalid email'],
-    required: [true, 'Please provide your email'],
-  },
-  passwordResetToken: String,
-  passwordResetTokenExpires: Date,
-});
+  { timestamps: true }
+);
 
 // Find only active user
 userSchema.pre(/^find/, function (next) {

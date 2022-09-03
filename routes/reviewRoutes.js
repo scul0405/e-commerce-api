@@ -11,10 +11,7 @@ const {
 
 const reviewRouter = express.Router({ mergeParams: true });
 
-reviewRouter
-  .route('/')
-  .get(getAllReviews)
-  .post(protectRoute(User), createAReview);
+reviewRouter.route('/').get(getAllReviews).post(createAReview);
 
 reviewRouter
   .route('/:id')

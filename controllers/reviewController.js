@@ -34,7 +34,7 @@ exports.getAReview = catchAsync(async (req, res, next) => {
 
 exports.createAReview = catchAsync(async (req, res, next) => {
   if (req.params.productId) req.body.productId = req.params.productId;
-  req.body.userId = req.user.id;
+  if (req.user) req.body.userId = req.user.id;
   // Handle when review by user already created
   const createdReview = await Review.findOne({
     userId: req.body.userId,
