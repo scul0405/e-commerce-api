@@ -10,12 +10,15 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/AppError');
-const adminRouter = require('./routes/adminRoutes');
-const userRouter = require('./routes/userRoutes');
-const productRouter = require('./routes/productRoutes');
-const reviewRouter = require('./routes/reviewRoutes');
-const cartRouter = require('./routes/cartRoutes');
-const orderRouter = require('./routes/orderRoutes');
+const {
+  adminRouter,
+  userRouter,
+  authRouter,
+  productRouter,
+  reviewRouter,
+  cartRouter,
+  orderRouter,
+} = require('./routes/allRouters');
 
 const app = express();
 // SET SECURITY HTTP HEADER
@@ -57,6 +60,7 @@ mongoose.set('toObject', { virtuals: true });
 // ROUTE
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/cart', cartRouter);
