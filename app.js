@@ -1,6 +1,4 @@
-const dotenv = require('dotenv');
-
-dotenv.config({ path: './.env' });
+const mongoose = require('mongoose');
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -9,7 +7,6 @@ const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/AppError');
@@ -20,18 +17,18 @@ const reviewRouter = require('./routes/reviewRoutes');
 const cartRouter = require('./routes/cartRoutes');
 const orderRouter = require('./routes/orderRoutes');
 
-const server = express();
+const app = express();
 // SET SECURITY HTTP HEADER
-server.use(helmet());
+app.use(helmet());
 
 // Data sanitization against noSQL query injection
-server.use(mongoSanitize());
+app.use(mongoSanitize());
 
 // Data sanitization against XSS
-server.use(xss());
+app.use(xss());
 
 // Prevent parameters pollution
-server.use(
+app.use(
   hpp({
     whitelist: [],
   })
@@ -44,51 +41,33 @@ const limiter = rateLimit({
   message: `Too many requests from this IP, please try again after ${process.env.MAX_RATE_LIMIT_TIME} minutes !`,
 });
 
-server.use('/api', limiter);
+app.use('/api', limiter);
 
 // CORS
-server.use(cors());
+app.use(cors());
 
 // Morgan
-if (process.env.NODE_ENV === 'development') server.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-server.use(cookieParser());
-server.use(express.json());
+app.use(cookieParser());
+app.use(express.json());
 mongoose.set('toJSON', { virtuals: true });
 mongoose.set('toObject', { virtuals: true });
 
 // ROUTE
-server.use('/api/v1/admin', adminRouter);
-server.use('/api/v1/users', userRouter);
-server.use('/api/v1/products', productRouter);
-server.use('/api/v1/reviews', reviewRouter);
-server.use('/api/v1/cart', cartRouter);
-server.use('/api/v1/order', orderRouter);
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/products', productRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/cart', cartRouter);
+app.use('/api/v1/order', orderRouter);
 
 // Handle when no match any routes
-server.all('*', (req, res, next) => {
+app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server !`, 404));
 });
 
 // Execute all errors throw out global
-server.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
-// Database connection
-const DB_URI = process.env.MONGODB_URI.replace(
-  '<password>',
-  process.env.MONGODB_PASSWORD
-);
-
-mongoose
-  .connect(DB_URI, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log('Connect to database successful !');
-  });
-
-const port = process.env.PORT || 3000;
-
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+module.exports = app;

@@ -2,12 +2,12 @@
   "name": "e-commerce-api",
   "version": "1.0.0",
   "description": "Api for e-commerce app",
-  "main": "index.js",
+  "main": "server.js",
   "engines": {
     "node": ">=8.3.0"
   },
   "scripts": {
-    "start:dev": "nodemon index.js",
+    "start:dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Scul0405",
