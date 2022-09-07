@@ -2,7 +2,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 const createSendToken = require('../utils/createSendToken');
 
-exports.createOne = (Model) =>
+exports.createOneAccount = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
     createSendToken(doc, 201, res);

@@ -1,3 +1,4 @@
+// NOTE: AUTH ROUTE USING FOR ONLY USER, NOT FOR ADMIN
 const express = require('express');
 
 const {
@@ -5,7 +6,7 @@ const {
   loginUser,
   forgotPassword,
   resetPassword,
-} = require('../controllers/userController');
+} = require('../controllers/authController');
 
 const authRouter = express.Router();
 

@@ -1,6 +1,6 @@
 const Admin = require('../models/admin');
-const { loginOne, createOne } = require('./refactorController');
+const { loginOne, createOneAccount } = require('./refactorController');
 
-exports.createAnAdminUser = createOne(Admin);
+exports.createAnAdminUser = createOneAccount(Admin);
 
 exports.loginAdminUser = loginOne(Admin);

@@ -1,6 +1,6 @@
 const express = require('express');
 const Admin = require('../models/admin');
-const { protectRoute } = require('../controllers/authController');
+const protectRoute = require('../utils/ProtectRoute');
 const reviewRouter = require('./reviewRoutes');
 const cartRouter = require('./cartRoutes');
 const {

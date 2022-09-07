@@ -5,7 +5,7 @@ const {
   deleteUser,
   changePassword,
 } = require('../controllers/userController');
-const { protectRoute } = require('../controllers/authController');
+const protectRoute = require('../utils/ProtectRoute');
 
 const userRouter = express.Router();
 

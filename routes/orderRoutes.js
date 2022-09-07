@@ -1,7 +1,7 @@
 const express = require('express');
 const Admin = require('../models/admin');
 const User = require('../models/user');
-const { protectRoute } = require('../controllers/authController');
+const protectRoute = require('../utils/ProtectRoute');
 const {
   createAnOrder,
   getAnOrder,

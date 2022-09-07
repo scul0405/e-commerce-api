@@ -5,7 +5,7 @@ const {
   addToCart,
   getUserCart,
 } = require('../controllers/cartController');
-const { protectRoute } = require('../controllers/authController');
+const protectRoute = require('../utils/ProtectRoute');
 
 const cartRouter = express.Router({ mergeParams: true });
 

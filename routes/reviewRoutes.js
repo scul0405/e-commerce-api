@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../models/user');
-const { protectRoute } = require('../controllers/authController');
+const protectRoute = require('../utils/ProtectRoute');
 const {
   getAllReviews,
   getAReview,
